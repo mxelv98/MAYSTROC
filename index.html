@@ -11,7 +11,7 @@
         /* New Base styles for the professional theme */
         body {
             font-family: 'Inter', 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #0A0A0A, #151515); /* Deep dark background */
+            background: #000000; /* Solid black background */
             color: #E0E0E0; /* Light grey for general text */
             overflow: hidden; /* Prevent scrolling during splash screen */
         }
@@ -180,7 +180,7 @@
 <body>
 
     <!-- Splash Screen -->
-    <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#0A0A0A] z-50 transition-opacity duration-700 opacity-100">
+    <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#000000] z-50 transition-opacity duration-700 opacity-100">
         <!-- Using the provided image for the logo -->
         <img src="logo.png" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
         <h1 class="text-4xl font-bold text-[#00C6FF]">MAYSTRO CRASH</h1>
@@ -209,7 +209,7 @@
 
         <!-- Main Title -->
         <h2 class="text-4xl md:text-5xl font-extrabold text-[#00C6FF] mb-8 title-pulse">
-            🎯 محاكي MAYSTRO CRASH
+            🎯 MAYSTRO CRASH
         </h2>
 
         <!-- Simulator Box -->
@@ -466,7 +466,7 @@
             const protecaoValue = document.getElementById("protecao").innerText;
 
             const prompt = `
-                حلل نتائج محاكاة "MAYSTRO CRASH" التالية وقدم شرحًا موجزًا ومفيدًا.
+                حلل نتائج "MAYSTRO CRASH" التالية وقدم شرحًا موجزًا ومفيدًا.
                 الناتج الحالي (Saida): ${saidaValue}
                 النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
                 النتيجة المحتملة (Posivel): ${posivelValue}
@@ -538,7 +538,7 @@
             const protecaoValue = document.getElementById("protecao").innerText;
 
             const prompt = `
-                بناءً على نتائج محاكاة "MAYSTRO CRASH" التالية، قدم 3-5 نصائح استراتيجية موجزة ومفيدة للمستخدم.
+                بناءً على نتائج "MAYSTRO CRASH" التالية، قدم 3-5 نصائح استراتيجية موجزة ومفيدة للمستخدم.
                 الناتج الحالي (Saida): ${saidaValue}
                 النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
                 النتيجة المحتملة (Posivel): ${posivelValue}
@@ -610,7 +610,7 @@
             const protecaoValue = document.getElementById("protecao").innerText;
 
             const prompt = `
-                بناءً على نتائج محاكاة "MAYSTRO CRASH" الحالية، قدم توقعًا موجزًا للجولة القادمة.
+                بناءً على نتائج "MAYSTRO CRASH" الحالية، قدم توقعًا موجزًا للجولة القادمة.
                 الناتج الحالي (Saida): ${saidaValue}
                 النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
                 النتيجة المحتملة (Posivel): ${posivelValue}
