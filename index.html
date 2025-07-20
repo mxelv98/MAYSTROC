@@ -217,6 +217,19 @@
                 font-size: 1rem; /* Even smaller for very small screens */
             }
         }
+        .telegram-logo-link {
+            display: block; /* Make it a block element to center or control spacing */
+            margin-top: 1rem; /* Space above the logo */
+            text-align: center; /* Center the image if it's smaller than its container */
+        }
+        .telegram-logo {
+            width: 50px; /* Adjust size as needed */
+            height: 50px; /* Adjust size as needed */
+            transition: transform 0.2s ease-in-out;
+        }
+        .telegram-logo:hover {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
     </style>
 </head>
 <body>
@@ -343,6 +356,11 @@
                     للدعم والمزيد من المعلومات، انضم إلى صفحتنا على تليجرام:
                     <a href="https://t.me/maysttrobet" target="_blank" class="telegram-link">
                         t.me/maysttrobet
+                    </a>
+                </li>
+                <li class="mt-4 telegram-logo-link">
+                    <a href="https://t.me/maysttrobet" target="_blank">
+                        <img src="logotl.png" alt="Telegram Logo" class="telegram-logo">
                     </a>
                 </li>
             </ul>
