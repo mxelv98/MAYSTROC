@@ -182,7 +182,7 @@
     <!-- Splash Screen -->
     <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#0A0A0A] z-50 transition-opacity duration-700 opacity-100">
         <!-- Using the provided image for the logo -->
-        <img src="uploaded:logo.png-d4c0b613-2084-4636-ade3-570b4980feb5" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
+        <img src="logo.png" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
         <h1 class="text-4xl font-bold text-[#00C6FF]">MAYSTRO CRASH</h1>
         <p class="text-xl text-gray-400 mt-2">جاري التحميل...</p>
     </div>
@@ -220,7 +220,7 @@
 
             <!-- Dynamic Result Icon -->
             <div id="result-icon-container" class="text-7xl my-6 mx-auto flex items-center justify-center h-24">
-                <span id="result-icon" class="icon-animation"></span>
+                <span id="result-icon" class="icon-animation" style="display: none;"></span>
             </div>
 
             <div id="posivel" class="label text-xl text-gray-400 mt-4 transition-all duration-300 ease-in-out">---</div>
@@ -297,9 +297,6 @@
                     </a>
                 </li>
             </ul>
-            <p class="text-gray-400 text-sm mt-4">
-                هذه الإحصائيات تقديرية وقد تختلف في اللعب الفعلي.
-            </p>
         </div>
 
     </div> <!-- End of main-content -->
@@ -357,6 +354,9 @@
             const resultIcon = document.getElementById("result-icon");
             const posivel = document.getElementById("posivel");
             const protecao = document.getElementById("protecao");
+
+            // Ensure icon is visible before updating its content
+            resultIcon.style.display = 'block';
 
             if (Resultado === "Rosa") {
                 posivel.innerText = "تقريباً 5X";
@@ -452,6 +452,9 @@
             const analyzeLoadingSpinner = document.getElementById("analyzeLoadingSpinner");
             const analysisOutput = document.getElementById("analysisOutput");
 
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
+
             analyzeButton.disabled = true;
             analyzeButtonText.classList.add("hidden");
             analyzeLoadingSpinner.classList.remove("hidden");
@@ -521,6 +524,9 @@
             const strategyTipsLoadingSpinner = document.getElementById("strategyTipsLoadingSpinner");
             const strategyTipsOutput = document.getElementById("strategyTipsOutput");
 
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
+
             strategyTipsButton.disabled = true;
             strategyTipsButtonText.classList.add("hidden");
             strategyTipsLoadingSpinner.classList.remove("hidden");
@@ -589,6 +595,9 @@
             const futurePredictionButtonText = document.getElementById("futurePredictionButtonText");
             const futurePredictionLoadingSpinner = document.getElementById("futurePredictionLoadingSpinner");
             const futurePredictionOutput = document.getElementById("futurePredictionOutput");
+
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
 
             futurePredictionButton.disabled = true;
             futurePredictionButtonText.classList.add("hidden");
@@ -664,9 +673,15 @@
             mainContent.classList.add('fade-slide-in-active');
             document.body.style.overflow = 'auto';
 
-            // Manually trigger the first result update and start cooldown
-            atualizarResultados();
-            updateRefreshButtonState(); // Initialize the refresh button state
+            // Initialize result fields to default "---" state
+            document.getElementById("saida").innerText = "---";
+            document.getElementById("grafico").innerText = "---";
+            document.getElementById("result-icon").style.display = 'none'; // Hide icon initially
+            document.getElementById("posivel").innerText = "---";
+            document.getElementById("protecao").innerText = "---";
+
+            // Initialize the refresh button state
+            updateRefreshButtonState();
         }
 
         // Splash screen and Warning Modal logic
