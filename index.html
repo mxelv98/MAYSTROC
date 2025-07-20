@@ -32,18 +32,18 @@
 
         /* Default action button (Update Result) and AI buttons */
         .action-button-gradient {
-            background-image: linear-gradient(to right, #00C6FF, #0072FF); /* Bright Blue to Deep Blue */
-            color: #FFFFFF; /* White text for contrast */
-            box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4); /* Matching blue shadow */
-            border: 1px solid rgba(0, 198, 255, 0.3); /* Subtle blue border */
+            background-image: linear-gradient(to right, #7acd07, #9ffd09); /* New Green gradient */
+            color: #1A1A1A; /* Dark text for contrast on green */
+            box-shadow: 0 6px 20px rgba(159, 253, 9, 0.4); /* Matching green shadow */
+            border: 1px solid rgba(159, 253, 9, 0.3); /* Subtle green border */
         }
         .action-button-gradient:hover {
-            box-shadow: 0 8px 25px rgba(0, 198, 255, 0.6);
+            box-shadow: 0 8px 25px rgba(159, 253, 9, 0.6);
             transform: translateY(-3px);
         }
         .action-button-gradient:active {
             transform: translateY(0);
-            box-shadow: 0 4px 10px rgba(0, 198, 255, 0.3);
+            box-shadow: 0 4px 10px rgba(159, 253, 9, 0.3);
             transform: scale(0.98);
         }
 
@@ -79,14 +79,14 @@
             animation: pulse-glow-new 2s infinite ease-in-out;
         }
         @keyframes pulse-glow-new {
-            0%, 100% { text-shadow: 0 0 10px rgba(0, 198, 255, 0.7); }
-            50% { text-shadow: 0 0 20px rgba(0, 198, 255, 1); }
+            0%, 100% { text-shadow: 0 0 10px rgba(159, 253, 9, 0.7); } /* New Green glow */
+            50% { text-shadow: 0 0 20px rgba(159, 253, 9, 1); } /* New Green glow */
         }
 
         /* Loading spinner */
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #00C6FF; /* Matching new accent color */
+            border-top: 4px solid #9ffd09; /* Matching new accent color */
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -152,7 +152,7 @@
             background-color: #1E1E1E;
             padding: 2.5rem;
             border-radius: 1.25rem;
-            box-shadow: 0 0 40px rgba(0, 198, 255, 0.4); /* Blue glow */
+            box-shadow: 0 0 40px rgba(159, 253, 9, 0.4); /* New Green glow */
             text-align: center;
             max-width: 90%;
             width: 400px;
@@ -166,14 +166,21 @@
             transform: translateY(0);
         }
         .telegram-link {
-            color: #00C6FF; /* Match accent color */
+            color: #9ffd09; /* Match accent color */
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s ease-in-out;
         }
         .telegram-link:hover {
-            color: #0072FF; /* Slightly darker blue on hover */
+            color: #7acd07; /* Slightly darker green on hover */
             text-decoration: underline;
+        }
+        .main-title-logo {
+            width: 2.5rem; /* Adjust size as needed */
+            height: 2.5rem; /* Adjust size as needed */
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 0.5rem; /* Space between logo and text */
         }
     </style>
 </head>
@@ -183,16 +190,16 @@
     <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#000000] z-50 transition-opacity duration-700 opacity-100">
         <!-- Using the provided image for the logo -->
         <img src="logo.png" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
-        <h1 class="text-4xl font-bold text-[#00C6FF]">MAYSTRO CRASH</h1>
+        <h1 class="text-4xl font-bold text-[#9ffd09]">MAYSTRO CRASH</h1>
         <p class="text-xl text-gray-400 mt-2">جاري التحميل...</p>
     </div>
 
     <!-- Warning Modal -->
     <div id="warning-modal" class="warning-modal-overlay hidden">
         <div class="warning-modal-content">
-            <h3 class="text-2xl font-bold text-[#00C6FF] mb-4">⚠️ تنبيه هام ⚠️</h3>
+            <h3 class="text-2xl font-bold text-[#9ffd09] mb-4">⚠️ تنبيه هام ⚠️</h3>
             <p class="text-lg text-gray-300 mb-2">
-                يمكنك استخدام هذا السكريبت فقط مع حساب جديد وباستخدام الكود الترويجي <span class="text-[#00C6FF] font-bold">MAS98</span>.
+                يمكنك استخدام هذا السكريبت فقط مع حساب جديد وباستخدام الكود الترويجي <span class="text-[#9ffd09] font-bold">MAS98</span>.
             </p>
             <p class="text-lg text-gray-300 mb-6">
                 يمكنك تحديث النتائج كل دقيقتين. إذا كان لديك حساب VIP، يمكنك التحديث في كل جولة.
@@ -208,8 +215,8 @@
     <div id="main-content" class="hidden flex-col items-center justify-center min-h-screen p-6 text-white text-right">
 
         <!-- Main Title -->
-        <h2 class="text-4xl md:text-5xl font-extrabold text-[#00C6FF] mb-8 title-pulse">
-            🎯 MAYSTRO CRASH
+        <h2 class="text-4xl md:text-5xl font-extrabold text-[#9ffd09] mb-8 title-pulse">
+            <img src="logo.png" alt="Logo" class="main-title-logo"> MAYSTRO CRASH
         </h2>
 
         <!-- Simulator Box -->
@@ -257,7 +264,7 @@
         <!-- Gemini API Analysis Output -->
         <div id="geminiAnalysis" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
              style="min-height: 100px;">
-            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">تحليل الذكاء الاصطناعي:</h3>
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">تحليل الذكاء الاصطناعي:</h3>
             <p id="analysisOutput" class="text-gray-300 text-lg">
                 انقر على "تحليل النتيجة (VIP)" للحصول على تحليل من الذكاء الاصطناعي.
             </p>
@@ -266,7 +273,7 @@
         <!-- Gemini API Strategy Tips Output -->
         <div id="geminiStrategyTips" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
              style="min-height: 100px;">
-            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">نصائح استراتيجية:</h3>
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">نصائح استراتيجية:</h3>
             <p id="strategyTipsOutput" class="text-gray-300 text-lg">
                 انقر على "نصائح استراتيجية (VIP)" للحصول على نصائح من الذكاء الاصطناعي.
             </p>
@@ -275,7 +282,7 @@
         <!-- Gemini API Future Prediction Output -->
         <div id="geminiFuturePrediction" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
              style="min-height: 100px;">
-            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">🔮 توقعات الجولة القادمة:</h3>
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">🔮 توقعات الجولة القادمة:</h3>
             <p id="futurePredictionOutput" class="text-gray-300 text-lg">
                 انقر على "توقعات الجولة القادمة (VIP)" للحصول على توقعات من الذكاء الاصطناعي.
             </p>
@@ -283,7 +290,7 @@
 
         <!-- Static Diagnostic/Statistical Section -->
         <div id="staticDiagnostic" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right">
-            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">📊 التحليل الإحصائي:</h3>
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">📊 التحليل الإحصائي:</h3>
             <ul class="text-gray-300 text-lg list-disc pr-6">
                 <li class="mb-2">متوسط نقطة الانهيار التاريخية: 1.85x</li>
                 <li class="mb-2">احتمالية الانهيار قبل 2x: حوالي 60%</li>
@@ -602,7 +609,7 @@
             futurePredictionButton.disabled = true;
             futurePredictionButtonText.classList.add("hidden");
             futurePredictionLoadingSpinner.classList.remove("hidden");
-            futurePredictionOutput.innerText = "جاري الحصول على توقعات الجولة القادمة بواسطة الذكاء الاصطناعي...";
+            futurePredictionOutput.innerText = "جاري الحصول على توقعات الجولة القادمة بواسطة الذكاء الاصاهرائى...";
 
             const saidaValue = document.getElementById("saida").innerText;
             const graficoValue = document.getElementById("grafico").innerText;
