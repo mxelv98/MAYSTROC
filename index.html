@@ -6,34 +6,87 @@
     <title>MAYSTRO CRASH</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for gradients and shadows not easily done with pure Tailwind */
+        /* New Base styles for the professional theme */
         body {
-            font-family: 'Inter', 'Cairo', sans-serif; /* Prefer Inter, fallback to Cairo */
-            background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+            font-family: 'Inter', 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0A0A0A, #151515); /* Deep dark background */
+            color: #E0E0E0; /* Light grey for general text */
             overflow: hidden; /* Prevent scrolling during splash screen */
         }
-        .button-gradient {
-            background-image: linear-gradient(to right, #ffcc00, #ffdb58);
-            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
+
+        /* General button style */
+        .button-base {
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.125rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.05em; /* Slightly increased letter spacing for modern look */
+            white-space: nowrap; /* Prevent text wrapping */
         }
-        .button-gradient:hover {
-            box-shadow: 0 6px 20px rgba(255, 204, 0, 0.6);
-            transform: translateY(-2px);
+
+        /* Default action button (Update Result) and AI buttons */
+        .action-button-gradient {
+            background-image: linear-gradient(to right, #00C6FF, #0072FF); /* Bright Blue to Deep Blue */
+            color: #FFFFFF; /* White text for contrast */
+            box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4); /* Matching blue shadow */
+            border: 1px solid rgba(0, 198, 255, 0.3); /* Subtle blue border */
         }
-        .button-gradient:active {
+        .action-button-gradient:hover {
+            box-shadow: 0 8px 25px rgba(0, 198, 255, 0.6);
+            transform: translateY(-3px);
+        }
+        .action-button-gradient:active {
             transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
-            transform: scale(0.98); /* Added subtle scale on click */
+            box-shadow: 0 4px 10px rgba(0, 198, 255, 0.3);
+            transform: scale(0.98);
         }
-        .box-shadow {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+
+        /* Disabled button style for cooldown */
+        .cooldown-button {
+            background-image: linear-gradient(to right, #2A2A2A, #3A3A3A); /* Darker grey for disabled state */
+            color: #888888; /* Muted grey text color */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: not-allowed;
+            opacity: 0.7;
+            border: 1px solid #4A4A4A; /* Darker subtle border */
         }
+        .cooldown-button:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .cooldown-button:active {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Box styling */
+        .box-container {
+            background-color: #1E1E1E; /* Slightly lighter than body for depth */
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Deeper, more diffused shadow */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle border */
+        }
+
+        /* Main title animation */
+        .title-pulse {
+            animation: pulse-glow-new 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow-new {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 198, 255, 0.7); }
+            50% { text-shadow: 0 0 20px rgba(0, 198, 255, 1); }
+        }
+
+        /* Loading spinner */
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #ffcc00;
+            border-top: 4px solid #00C6FF; /* Matching new accent color */
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -43,7 +96,8 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Custom animation for splash screen logo */
+
+        /* Splash screen logo animation */
         @keyframes bounce-slow {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
@@ -52,7 +106,7 @@
             animation: bounce-slow 2s infinite ease-in-out;
         }
 
-        /* Animation for main content entrance */
+        /* Main content entrance animation */
         @keyframes fade-slide-in {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -61,7 +115,7 @@
             animation: fade-slide-in 0.8s ease-out forwards;
         }
 
-        /* Animation for result labels update */
+        /* Result labels update animation */
         @keyframes pop-in {
             0% { opacity: 0; transform: scale(0.9); }
             100% { opacity: 1; transform: scale(1); }
@@ -70,7 +124,7 @@
             animation: pop-in 0.4s ease-out;
         }
 
-        /* Animation for icon change */
+        /* Icon change animation */
         @keyframes icon-fade-in {
             from { opacity: 0; transform: scale(0.8); }
             to { opacity: 1; transform: scale(1); }
@@ -78,110 +132,170 @@
         .icon-animation {
             animation: icon-fade-in 0.5s ease-out;
         }
+
+        /* Warning Modal Styles */
+        .warning-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100; /* Above splash screen */
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.3s ease-in-out;
+        }
+        .warning-modal-content {
+            background-color: #1E1E1E;
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 0 40px rgba(0, 198, 255, 0.4); /* Blue glow */
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            transform: translateY(-20px); /* Start slightly above */
+            transition: transform 0.3s ease-in-out;
+        }
+        .warning-modal-overlay.show {
+            opacity: 1;
+        }
+        .warning-modal-overlay.show .warning-modal-content {
+            transform: translateY(0);
+        }
+        .telegram-link {
+            color: #00C6FF; /* Match accent color */
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+        .telegram-link:hover {
+            color: #0072FF; /* Slightly darker blue on hover */
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
     <!-- Splash Screen -->
-    <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#0f0f0f] z-50 transition-opacity duration-700 opacity-100">
+    <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#0A0A0A] z-50 transition-opacity duration-700 opacity-100">
         <!-- Using the provided image for the logo -->
-        <img src="images/logo.png" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
-        <h1 class="text-4xl font-bold text-[#ffcc00]">MAYSTRO CRASH</h1>
-        <p class="text-xl text-gray-300 mt-2">جاري التحميل...</p>
+        <img src="uploaded:logo.png-d4c0b613-2084-4636-ade3-570b4980feb5" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
+        <h1 class="text-4xl font-bold text-[#00C6FF]">MAYSTRO CRASH</h1>
+        <p class="text-xl text-gray-400 mt-2">جاري التحميل...</p>
+    </div>
+
+    <!-- Warning Modal -->
+    <div id="warning-modal" class="warning-modal-overlay hidden">
+        <div class="warning-modal-content">
+            <h3 class="text-2xl font-bold text-[#00C6FF] mb-4">⚠️ تنبيه هام ⚠️</h3>
+            <p class="text-lg text-gray-300 mb-2">
+                يمكنك استخدام هذا السكريبت فقط مع حساب جديد وباستخدام الكود الترويجي <span class="text-[#00C6FF] font-bold">MAS98</span>.
+            </p>
+            <p class="text-lg text-gray-300 mb-6">
+                يمكنك تحديث النتائج كل دقيقتين. إذا كان لديك حساب VIP، يمكنك التحديث في كل جولة.
+            </p>
+            <button onclick="dismissWarning()"
+                    class="button-base action-button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg">
+                فهمت
+            </button>
+        </div>
     </div>
 
     <!-- Main Content Container (initially hidden) -->
     <div id="main-content" class="hidden flex-col items-center justify-center min-h-screen p-6 text-white text-right">
 
         <!-- Main Title -->
-        <h2 class="text-4xl md:text-5xl font-extrabold text-[#ffcc00] mb-8 animate-pulse">
-            🎯 MAYSTRO CRASH
+        <h2 class="text-4xl md:text-5xl font-extrabold text-[#00C6FF] mb-8 title-pulse">
+            🎯 محاكي MAYSTRO CRASH
         </h2>
 
         <!-- Simulator Box -->
-        <div class="box bg-[#202020] p-8 rounded-2xl inline-block mt-8 box-shadow
-                    w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
+        <div class="box-container w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
             <!-- Output Labels -->
-            <div id="saida" class="label text-3xl font-bold mt-4 mb-2 transition-all duration-300 ease-in-out">---</div>
-            <div id="grafico" class="label text-2xl text-gray-300 mb-4 transition-all duration-300 ease-in-out">---</div>
+            <div id="saida" class="label text-4xl font-bold mt-4 mb-2 text-white transition-all duration-300 ease-in-out">---</div>
+            <div id="grafico" class="label text-2xl text-gray-400 mb-4 transition-all duration-300 ease-in-out">---</div>
 
             <!-- Dynamic Result Icon -->
-            <div id="result-icon-container" class="text-6xl my-6 mx-auto flex items-center justify-center h-20">
+            <div id="result-icon-container" class="text-7xl my-6 mx-auto flex items-center justify-center h-24">
                 <span id="result-icon" class="icon-animation"></span>
             </div>
 
             <div id="posivel" class="label text-xl text-gray-400 mt-4 transition-all duration-300 ease-in-out">---</div>
             <div id="protecao" class="label text-xl text-gray-400 mt-2 transition-all duration-300 ease-in-out">---</div>
 
-            <!-- Removed Countdown Timer -->
-            <!-- <div id="countdown" class="text-base mt-4 text-gray-500">التحديث القادم خلال: 12 ثانية</div> -->
         </div>
 
         <!-- Control Buttons -->
         <div class="controls mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <!-- New button to manually update results -->
-            <button onclick="atualizarResultados()"
-                    class="button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg
-                           hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#ffcc00] focus:ring-opacity-50">
-                تحديث النتيجة
+            <!-- Button to manually update results with cooldown -->
+            <button id="updateResultButton" onclick="atualizarResultados()"
+                    class="button-base action-button-gradient">
+                <span id="updateResultButtonText">تحديث النتيجة</span>
             </button>
-            <!-- Removed Start and Stop buttons -->
-            <!-- <button onclick="startUpdates()"
-                    class="button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg
-                           hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#ffcc00] focus:ring-opacity-50">
-                ابدأ
-            </button>
-            <button onclick="stopUpdates()"
-                    class="button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg
-                           hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#ffcc00] focus:ring-opacity-50">
-                أوقف
-            </button> -->
-            <button id="analyzeButton" onclick="analyzeResultWithGemini()"
-                    class="button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg
-                           hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#ffcc00] focus:ring-opacity-50
-                           flex items-center justify-center">
-                <span id="analyzeButtonText">✨ تحليل النتيجة</span>
+
+            <!-- AI Buttons (now all locked) -->
+            <button id="analyzeButton" onclick="showVipMessage('analysis')"
+                    class="button-base cooldown-button">
+                <span id="analyzeButtonText">✨ تحليل النتيجة (VIP)</span>
                 <div id="analyzeLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
             </button>
-            <button id="strategyTipsButton" onclick="getStrategyTipsWithGemini()"
-                    class="button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg
-                           hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#ffcc00] focus:ring-opacity-50
-                           flex items-center justify-center">
-                <span id="strategyTipsButtonText">✨ نصائح استراتيجية</span>
+            <button id="strategyTipsButton" onclick="showVipMessage('strategy')"
+                    class="button-base cooldown-button">
+                <span id="strategyTipsButtonText">✨ نصائح استراتيجية (VIP)</span>
                 <div id="strategyTipsLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
+            </button>
+            <button id="futurePredictionButton" onclick="showVipMessage('future')"
+                    class="button-base cooldown-button">
+                <span id="futurePredictionButtonText">🔮 توقعات الجولة القادمة (VIP)</span>
+                <div id="futurePredictionLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
             </button>
         </div>
 
         <!-- Gemini API Analysis Output -->
-        <div id="geminiAnalysis" class="bg-[#202020] p-6 rounded-2xl mt-8 box-shadow
-                                         w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+        <div id="geminiAnalysis" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
              style="min-height: 100px;">
-            <h3 class="text-xl font-bold text-[#ffcc00] mb-4">تحليل الذكاء الاصطناعي:</h3>
+            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">تحليل الذكاء الاصطناعي:</h3>
             <p id="analysisOutput" class="text-gray-300 text-lg">
-                انقر على "تحليل النتيجة" للحصول على تحليل من الذكاء الاصطناعي.
+                انقر على "تحليل النتيجة (VIP)" للحصول على تحليل من الذكاء الاصطناعي.
             </p>
         </div>
 
         <!-- Gemini API Strategy Tips Output -->
-        <div id="geminiStrategyTips" class="bg-[#202020] p-6 rounded-2xl mt-8 box-shadow
-                                            w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+        <div id="geminiStrategyTips" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
              style="min-height: 100px;">
-            <h3 class="text-xl font-bold text-[#ffcc00] mb-4">نصائح استراتيجية:</h3>
+            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">نصائح استراتيجية:</h3>
             <p id="strategyTipsOutput" class="text-gray-300 text-lg">
-                انقر على "نصائح استراتيجية" للحصول على نصائح من الذكاء الاصطناعي.
+                انقر على "نصائح استراتيجية (VIP)" للحصول على نصائح من الذكاء الاصطناعي.
+            </p>
+        </div>
+
+        <!-- Gemini API Future Prediction Output -->
+        <div id="geminiFuturePrediction" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+             style="min-height: 100px;">
+            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">🔮 توقعات الجولة القادمة:</h3>
+            <p id="futurePredictionOutput" class="text-gray-300 text-lg">
+                انقر على "توقعات الجولة القادمة (VIP)" للحصول على توقعات من الذكاء الاصطناعي.
             </p>
         </div>
 
         <!-- Static Diagnostic/Statistical Section -->
-        <div id="staticDiagnostic" class="bg-[#202020] p-6 rounded-2xl mt-8 box-shadow
-                                            w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right">
-            <h3 class="text-xl font-bold text-[#ffcc00] mb-4">📊 التحليل الإحصائي:</h3>
+        <div id="staticDiagnostic" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right">
+            <h3 class="text-xl font-bold text-[#00C6FF] mb-4">📊 التحليل الإحصائي:</h3>
             <ul class="text-gray-300 text-lg list-disc pr-6">
                 <li class="mb-2">متوسط نقطة الانهيار التاريخية: 1.85x</li>
                 <li class="mb-2">احتمالية الانهيار قبل 2x: حوالي 60%</li>
                 <li class="mb-2">احتمالية الوصول إلى 5x أو أكثر: حوالي 25%</li>
                 <li class="mb-2">أعلى نقطة انهيار مسجلة: 15.78x</li>
                 <li>أدنى نقطة انهيار مسجلة: 1.01x</li>
+                <li class="mt-4">
+                    للدعم والمزيد من المعلومات، انضم إلى صفحتنا على تليجرام:
+                    <a href="https://t.me/maysttrobet" target="_blank" class="telegram-link">
+                        t.me/maysttrobet
+                    </a>
+                </li>
             </ul>
             <p class="text-gray-400 text-sm mt-4">
                 هذه الإحصائيات تقديرية وقد تختلف في اللعب الفعلي.
@@ -191,10 +305,12 @@
     </div> <!-- End of main-content -->
 
     <script>
-        // Global variables for interval ID and countdown timer
-        // let intervalId; // No longer needed for automatic updates
-        // let countdown = 12; // No longer needed for automatic updates
-        let currentResultCategory = "---"; // To store "Rosa" or "Outro" for Gemini analysis
+        // Global variables
+        let currentResultCategory = "---";
+        let lastRefreshTime = 0; // Timestamp of the last refresh
+        let refreshCooldownTimerId = null; // Timer for refresh button cooldown
+
+        const DEFAULT_COOLDOWN = 120; // 2 minutes in seconds
 
         /**
          * Generates a random integer between min (inclusive) and max (inclusive).
@@ -213,47 +329,54 @@
          */
         function triggerAnimation(element, animationClass) {
             element.classList.remove(animationClass);
-            // Force reflow to restart animation
             void element.offsetWidth; // This line forces a reflow
             element.classList.add(animationClass);
         }
 
         /**
          * Updates the simulator results based on a random outcome.
-         * The logic simulates different "Pronto" scenarios.
+         * Includes cooldown logic for the refresh button.
          */
         function atualizarResultados() {
-            // Determine the main outcome: "Rosa" (Pink) or "Outro" (Other)
-            let Resultado = Math.random() < 0.5 ? "Rosa" : "Outro";
-            currentResultCategory = Resultado; // Store the current result category
+            const now = Date.now();
+            const cooldownDuration = DEFAULT_COOLDOWN;
+            const timeElapsed = (now - lastRefreshTime) / 1000; // in seconds
 
-            // Get references to DOM elements
+            if (timeElapsed < cooldownDuration) {
+                // If still in cooldown, prevent refresh
+                updateRefreshButtonState(); // Update button to show remaining time
+                return;
+            }
+
+            // Perform result update
+            let Resultado = Math.random() < 0.5 ? "Rosa" : "Outro";
+            currentResultCategory = Resultado;
+
             const saida = document.getElementById("saida");
             const grafico = document.getElementById("grafico");
             const resultIcon = document.getElementById("result-icon");
             const posivel = document.getElementById("posivel");
             const protecao = document.getElementById("protecao");
 
-            // Logic to update content and icons
             if (Resultado === "Rosa") {
                 posivel.innerText = "تقريباً 5X";
                 protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
                 saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
                 grafico.innerText = getRandom(50, 70) + "%";
-                resultIcon.innerText = "✅"; // Good outcome icon
+                resultIcon.innerText = "✅";
             } else {
                 posivel.innerText = "الدخول لمنطقة الخطر";
                 protecao.innerText = getRandom(0, 1) + "." + getRandom(1, 30) + "X";
                 saida.innerText = getRandom(1, 1) + "." + getRandom(1, 59) + "X";
                 grafico.innerText = getRandom(40, 50) + "%";
-                resultIcon.innerText = "⚠️"; // Warning/Danger outcome icon
+                resultIcon.innerText = "⚠️";
 
                 if (Math.random() < 0.5) {
                     posivel.innerText = "الخطر 4X";
                     protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
                     saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
                     grafico.innerText = getRandom(50, 70) + "%";
-                    resultIcon.innerText = "🚨"; // More specific danger icon
+                    resultIcon.innerText = "🚨";
                 }
 
                 if (Math.random() < 0.3) {
@@ -261,46 +384,64 @@
                     protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
                     saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
                     grafico.innerText = getRandom(50, 70) + "%";
-                    resultIcon.innerText = "📈"; // Stability/Growth icon
+                    resultIcon.innerText = "📈";
                 }
             }
 
-            // Trigger pop-in animation for each updated label
             triggerAnimation(saida, 'label-update-animation');
             triggerAnimation(grafico, 'label-update-animation');
             triggerAnimation(posivel, 'label-update-animation');
             triggerAnimation(protecao, 'label-update-animation');
-            triggerAnimation(resultIcon, 'icon-animation'); // Trigger animation for the icon
+            triggerAnimation(resultIcon, 'icon-animation');
+
+            lastRefreshTime = now; // Update last refresh time
+            updateRefreshButtonState(); // Start/reset cooldown display
         }
 
-        // Removed updateCountdown function as it's no longer needed
-        /*
-        function updateCountdown() {
-            countdown--;
-            document.getElementById("countdown").innerText =
-                "التحديث القادم خلال: " + countdown + " ثانية";
-            if (countdown <= 0) {
-                atualizarResultados(); // Update results when countdown finishes
-                countdown = 12; // Reset countdown
+        /**
+         * Updates the state (text, disabled, styling) of the "Update Result" button based on cooldown.
+         */
+        function updateRefreshButtonState() {
+            const updateButton = document.getElementById("updateResultButton");
+            const updateButtonTextSpan = document.getElementById("updateResultButtonText");
+            const cooldownDuration = DEFAULT_COOLDOWN; // Always 2 minutes
+            const now = Date.now();
+            const timeRemaining = Math.max(0, cooldownDuration - Math.floor((now - lastRefreshTime) / 1000));
+
+            if (timeRemaining > 0) {
+                updateButton.disabled = true;
+                updateButton.classList.add('cooldown-button'); // Apply cooldown style
+                updateButton.classList.remove('action-button-gradient');
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                updateButtonTextSpan.innerText = `الانتظار: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                if (!refreshCooldownTimerId) {
+                    refreshCooldownTimerId = setInterval(updateRefreshButtonState, 1000);
+                }
+            } else {
+                updateButton.disabled = false;
+                updateButton.classList.remove('cooldown-button');
+                updateButton.classList.add('action-button-gradient');
+                updateButtonTextSpan.innerText = "تحديث النتيجة";
+                clearInterval(refreshCooldownTimerId);
+                refreshCooldownTimerId = null;
             }
         }
-        */
 
-        // Removed startUpdates and stopUpdates functions as they are no longer needed
-        /*
-        function startUpdates() {
-            if (intervalId) return;
-            atualizarResultados();
-            countdown = 12;
-            intervalId = setInterval(updateCountdown, 1000);
+        /**
+         * Displays a VIP message when a locked AI button is clicked.
+         * @param {string} type - 'analysis' or 'strategy' or 'future' to determine which output area to use.
+         */
+        function showVipMessage(type) {
+            const message = "هذه الميزة متاحة فقط لمستخدمي VIP!"; // "This feature is only available for VIP users!"
+            if (type === 'analysis') {
+                document.getElementById("analysisOutput").innerText = message;
+            } else if (type === 'strategy') {
+                document.getElementById("strategyTipsOutput").innerText = message;
+            } else if (type === 'future') {
+                document.getElementById("futurePredictionOutput").innerText = message;
+            }
         }
-
-        function stopUpdates() {
-            clearInterval(intervalId);
-            intervalId = null;
-            document.getElementById("countdown").innerText = "متوقف حالياً";
-        }
-        */
 
         /**
          * Calls the Gemini API to analyze the current simulator results.
@@ -311,13 +452,11 @@
             const analyzeLoadingSpinner = document.getElementById("analyzeLoadingSpinner");
             const analysisOutput = document.getElementById("analysisOutput");
 
-            // Disable button and show loading spinner
             analyzeButton.disabled = true;
             analyzeButtonText.classList.add("hidden");
             analyzeLoadingSpinner.classList.remove("hidden");
-            analysisOutput.innerText = "جاري تحليل النتيجة بواسطة الذكاء الاصطناعي..."; // Loading message
+            analysisOutput.innerText = "جاري تحليل النتيجة بواسطة الذكاء الاصطناعي...";
 
-            // Collect current simulator data
             const saidaValue = document.getElementById("saida").innerText;
             const graficoValue = document.getElementById("grafico").innerText;
             const posivelValue = document.getElementById("posivel").innerText;
@@ -338,7 +477,7 @@
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = ""; // Leave this as-is. Canvas will provide the API key.
+            const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             try {
@@ -358,7 +497,7 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text;
-                    analysisOutput.innerText = text; // Display the LLM's response
+                    analysisOutput.innerText = text;
                 } else {
                     analysisOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تحليل النتيجة حاليًا. يرجى المحاولة مرة أخرى.";
                     console.error("Gemini API response structure unexpected:", result);
@@ -367,7 +506,6 @@
                 analysisOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
                 console.error("Error calling Gemini API:", error);
             } finally {
-                // Re-enable button and hide loading spinner
                 analyzeButton.disabled = false;
                 analyzeButtonText.classList.remove("hidden");
                 analyzeLoadingSpinner.classList.add("hidden");
@@ -383,13 +521,11 @@
             const strategyTipsLoadingSpinner = document.getElementById("strategyTipsLoadingSpinner");
             const strategyTipsOutput = document.getElementById("strategyTipsOutput");
 
-            // Disable button and show loading spinner
             strategyTipsButton.disabled = true;
             strategyTipsButtonText.classList.add("hidden");
             strategyTipsLoadingSpinner.classList.remove("hidden");
-            strategyTipsOutput.innerText = "جاري الحصول على نصائح استراتيجية بواسطة الذكاء الاصطناعي..."; // Loading message
+            strategyTipsOutput.innerText = "جاري الحصول على نصائح استراتيجية بواسطة الذكاء الاصطناعي...";
 
-            // Collect current simulator data
             const saidaValue = document.getElementById("saida").innerText;
             const graficoValue = document.getElementById("grafico").innerText;
             const posivelValue = document.getElementById("posivel").innerText;
@@ -400,7 +536,6 @@
                 الناتج الحالي (Saida): ${saidaValue}
                 النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
                 النتيجة المحتملة (Posivel): ${posivelValue}
-                الحماية (Protecao): ${protecaoValue}
                 فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
 
                 ركز على نصائح قابلة للتطبيق في سياق لعبة "Crash" (مثل متى يجب السحب، أو المخاطرة، أو الانتظار).
@@ -411,7 +546,7 @@
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = ""; // Leave this as-is. Canvas will provide the API key.
+            const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             try {
@@ -431,7 +566,7 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text;
-                    strategyTipsOutput.innerText = text; // Display the LLM's response
+                    strategyTipsOutput.innerText = text;
                 } else {
                     strategyTipsOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تقديم نصائح حاليًا. يرجى المحاولة مرة أخرى.";
                     console.error("Gemini API response structure unexpected:", result);
@@ -440,34 +575,113 @@
                 strategyTipsOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
                 console.error("Error calling Gemini API:", error);
             } finally {
-                // Re-enable button and hide loading spinner
                 strategyTipsButton.disabled = false;
                 strategyTipsButtonText.classList.remove("hidden");
                 strategyTipsLoadingSpinner.classList.add("hidden");
             }
         }
 
-        // Splash screen logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const splashScreen = document.getElementById('splash-screen');
+        /**
+         * Calls the Gemini API to get future predictions based on the current simulator results.
+         */
+        async function getFuturePredictionWithGemini() {
+            const futurePredictionButton = document.getElementById("futurePredictionButton");
+            const futurePredictionButtonText = document.getElementById("futurePredictionButtonText");
+            const futurePredictionLoadingSpinner = document.getElementById("futurePredictionLoadingSpinner");
+            const futurePredictionOutput = document.getElementById("futurePredictionOutput");
+
+            futurePredictionButton.disabled = true;
+            futurePredictionButtonText.classList.add("hidden");
+            futurePredictionLoadingSpinner.classList.remove("hidden");
+            futurePredictionOutput.innerText = "جاري الحصول على توقعات الجولة القادمة بواسطة الذكاء الاصطناعي...";
+
+            const saidaValue = document.getElementById("saida").innerText;
+            const graficoValue = document.getElementById("grafico").innerText;
+            const posivelValue = document.getElementById("posivel").innerText;
+            const protecaoValue = document.getElementById("protecao").innerText;
+
+            const prompt = `
+                بناءً على نتائج محاكاة "MAYSTRO CRASH" الحالية، قدم توقعًا موجزًا للجولة القادمة.
+                الناتج الحالي (Saida): ${saidaValue}
+                النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
+                النتيجة المحتملة (Posivel): ${posivelValue}
+                فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
+
+                اجعل التوقع في حدود 50 كلمة، مع التركيز على احتمالية الارتفاع أو الانخفاض أو الاستقرار، وباللغة العربية الفصحى.
+            `;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    futurePredictionOutput.innerText = text;
+                } else {
+                    futurePredictionOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تقديم توقعات حاليًا. يرجى المحاولة مرة أخرى.";
+                    console.error("Gemini API response structure unexpected:", result);
+                }
+            } catch (error) {
+                futurePredictionOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
+                console.error("Error calling Gemini API:", error);
+            } finally {
+                futurePredictionButton.disabled = false;
+                futurePredictionButtonText.classList.remove("hidden");
+                futurePredictionLoadingSpinner.classList.add("hidden");
+            }
+        }
+
+        /**
+         * Dismisses the warning modal and shows the main content.
+         */
+        function dismissWarning() {
+            const warningModal = document.getElementById('warning-modal');
             const mainContent = document.getElementById('main-content');
 
-            // Hide main content initially
-            mainContent.classList.add('hidden');
+            warningModal.classList.remove('show');
+            warningModal.classList.add('hidden');
+
+            mainContent.classList.remove('hidden');
+            mainContent.classList.add('flex');
+            mainContent.classList.add('fade-slide-in-active');
+            document.body.style.overflow = 'auto';
+
+            // Manually trigger the first result update and start cooldown
+            atualizarResultados();
+            updateRefreshButtonState(); // Initialize the refresh button state
+        }
+
+        // Splash screen and Warning Modal logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const warningModal = document.getElementById('warning-modal');
 
             setTimeout(() => {
-                splashScreen.style.opacity = '0'; // Start fade out
+                splashScreen.style.opacity = '0';
                 setTimeout(() => {
-                    splashScreen.classList.add('hidden'); // Hide splash screen completely
-                    mainContent.classList.remove('hidden'); // Show main content
-                    mainContent.classList.add('flex'); // Ensure flex display is applied
-                    mainContent.classList.add('fade-slide-in-active'); // Trigger main content entrance animation
-                    document.body.style.overflow = 'auto'; // Re-enable scrolling
-
-                    // Manually trigger the first result update when the main content loads
-                    atualizarResultados();
-                }, 700); // Duration of transition opacity for fade-out
-            }, 3000); // 3 seconds delay for splash screen
+                    splashScreen.classList.add('hidden');
+                    warningModal.classList.remove('hidden');
+                    warningModal.classList.add('show');
+                }, 700);
+            }, 3000);
         });
     </script>
 </body>
