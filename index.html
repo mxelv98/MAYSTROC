@@ -218,13 +218,16 @@
             }
         }
         .telegram-logo-link {
-            display: block; /* Make it a block element to center or control spacing */
-            margin-top: 1rem; /* Space above the logo */
-            text-align: center; /* Center the image if it's smaller than its container */
+            display: flex; /* Use flexbox to center content */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            margin-top: 2rem; /* More space above the logo */
+            flex-direction: column; /* Stack text and image vertically */
+            gap: 0.5rem; /* Space between text and image */
         }
         .telegram-logo {
-            width: 50px; /* Adjust size as needed */
-            height: 50px; /* Adjust size as needed */
+            width: 60px; /* Slightly larger logo */
+            height: 60px; /* Slightly larger logo */
             transition: transform 0.2s ease-in-out;
         }
         .telegram-logo:hover {
@@ -352,18 +355,13 @@
                 <li class="mb-2">احتمالية الوصول إلى 5x أو أكثر: حوالي 25%</li>
                 <li class="mb-2">أعلى نقطة انهيار مسجلة: 15.78x</li>
                 <li>أدنى نقطة انهيار مسجلة: 1.01x</li>
-                <li class="mt-4">
-                    للدعم والمزيد من المعلومات، انضم إلى صفحتنا على تليجرام:
-                    <a href="https://t.me/maysttrobet" target="_blank" class="telegram-link">
-                        t.me/maysttrobet
-                    </a>
-                </li>
-                <li class="mt-4 telegram-logo-link">
-                    <a href="https://t.me/maysttrobet" target="_blank">
-                        <img src="logotl.png" alt="Telegram Logo" class="telegram-logo">
-                    </a>
-                </li>
             </ul>
+            <div class="telegram-logo-link">
+                <a href="https://t.me/maysttrobet" target="_blank">
+                    <img src="logotl.png" alt="Telegram Logo" class="telegram-logo">
+                </a>
+                <span class="text-gray-400 text-sm mt-2">تواصل معنا</span> <!-- Added "Contact Us" text -->
+            </div>
         </div>
 
     </div> <!-- End of main-content -->
@@ -609,6 +607,7 @@
                 الناتج الحالي (Saida): ${saidaValue}
                 النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
                 النتيجة المحتملة (Posivel): ${posivelValue}
+                الحماية (Protecao): ${protecaoValue}
                 فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
 
                 ركز على نصائح قابلة للتطبيق في سياق لعبة "Crash" (مثل متى يجب السحب، أو المخاطرة، أو الانتظار).
