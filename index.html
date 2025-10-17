@@ -29,6 +29,7 @@
             justify-content: center;
             letter-spacing: 0.05em;
             white-space: nowrap;
+            height: 56px; /* Fixed height for buttons */
         }
 
         /* Default action button (Update Result) and AI buttons */
@@ -88,6 +89,9 @@
             width: 24px;
             height: 24px;
             animation: spin 1s linear infinite;
+        }
+        .loading-spinner.light {
+             border-top-color: #1A1A1A;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -419,8 +423,11 @@
 
         let app, auth, db;
 
-        // --- Splash Screen and Modal Control ---
+        // --- UI Control & State ---
         let splashHidden = false;
+        let currentModal = null;
+        let authInitialized = false;
+
         function hideSplashScreen() {
             if (splashHidden) return;
             const splashScreen = document.getElementById('splash-screen');
@@ -428,9 +435,7 @@
             setTimeout(() => splashScreen.classList.add('hidden'), 700);
             splashHidden = true;
         }
-
-        let currentModal = null;
-
+        
         function showModal(modalId) {
             if (currentModal) hideModal(currentModal);
             const modal = document.getElementById(modalId);
@@ -464,6 +469,19 @@
             showWelcomeModal();
         };
 
+        function setButtonLoading(formId, isLoading) {
+            const button = document.querySelector(`#${formId} button[type="submit"]`);
+            if (!button) return;
+
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `<div class="loading-spinner light mx-auto"></div>`;
+            } else {
+                button.disabled = false;
+                button.innerHTML = (formId === 'login-form') ? 'دخول' : 'إنشاء حساب';
+            }
+        }
+
         // --- Firebase Initialization and Auth Flow ---
         try {
             const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
@@ -476,10 +494,21 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
+            const authTimeout = setTimeout(() => {
+                if (!authInitialized) {
+                    console.warn("Auth state did not resolve in time. Forcing UI.");
+                    hideSplashScreen();
+                    showWelcomeModal();
+                }
+            }, 7000);
+
             setPersistence(auth, browserSessionPersistence)
                 .then(() => {
                     return onAuthStateChanged(auth, async (user) => {
+                        authInitialized = true;
+                        clearTimeout(authTimeout);
                         hideSplashScreen();
+
                         if (user && user.emailVerified) {
                             await showMainApp(user);
                         } else {
@@ -489,6 +518,8 @@
                     });
                 })
                 .catch((error) => {
+                    authInitialized = true;
+                    clearTimeout(authTimeout);
                     console.error("Error setting persistence:", error);
                     hideSplashScreen();
                     showWelcomeModal();
@@ -497,7 +528,7 @@
         } catch (error) {
             console.error("FATAL: Firebase initialization failed.", error);
             hideSplashScreen();
-            document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-center"><div><h1 class="text-2xl font-bold text-red-500">خطأ في الإعداد</h1><p class="text-lg text-gray-300 mt-2">لا يمكن تهيئة التطبيق. يرجى الاتصال بالدعم.</p></div></div>`;
+            document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-center bg-black"><div><h1 class="text-2xl font-bold text-red-500">خطأ في الإعداد</h1><p class="text-lg text-gray-300 mt-2">لا يمكن تهيئة التطبيق. يرجى الاتصال بالدعم.</p></div></div>`;
         }
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -509,6 +540,7 @@
             const password = document.getElementById('loginPasswordInput').value;
             const errorElement = document.getElementById('login-error');
             errorElement.innerText = '';
+            setButtonLoading('login-form', true);
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -518,10 +550,16 @@
                     await signOut(auth);
                     showVerificationModal(user, 'login-unverified');
                 }
-                // onAuthStateChanged will handle successful, verified login
+                // onAuthStateChanged handles successful, verified login
             } catch (error) {
                 console.error("Login Error:", error.code);
-                errorElement.innerText = "فشل تسجيل الدخول. تحقق من بريدك الإلكتروني وكلمة المرور.";
+                let message = "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.";
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    message = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+                }
+                errorElement.innerText = message;
+            } finally {
+                setButtonLoading('login-form', false);
             }
         }
 
@@ -534,25 +572,21 @@
             const password = document.getElementById('signupPasswordInput').value;
             const errorElement = document.getElementById('signup-error');
             errorElement.innerText = '';
+            setButtonLoading('signup-form', true);
             
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // Send verification email
                 await sendEmailVerification(user);
 
-                // Store additional user info in Firestore
                 const userDocRef = doc(db, "artifacts", appId, "users", user.uid);
                 await setDoc(userDocRef, {
-                    firstName,
-                    lastName,
-                    dob,
+                    firstName, lastName, dob,
                     email: user.email,
                     createdAt: new Date()
                 });
                 
-                // Sign out and show verification message
                 await signOut(auth);
                 showVerificationModal(null, 'signup-success');
 
@@ -565,6 +599,8 @@
                 } else {
                     errorElement.innerText = "فشل إنشاء الحساب. حاول مرة أخرى.";
                 }
+            } finally {
+                setButtonLoading('signup-form', false);
             }
         }
 
@@ -572,7 +608,7 @@
             const titleEl = document.getElementById('verification-title');
             const messageEl = document.getElementById('verification-message');
             const actionsEl = document.getElementById('verification-actions');
-            actionsEl.innerHTML = ''; // Clear previous actions
+            actionsEl.innerHTML = '';
 
             if (context === 'signup-success') {
                 titleEl.innerText = '✅ تم إنشاء الحساب بنجاح!';
@@ -593,7 +629,7 @@
                         await sendEmailVerification(user);
                         messageEl.innerText = 'تم إرسال رابط جديد. يرجى التحقق من بريدك الإلكتروني.';
                         resendBtn.disabled = true;
-                        resendBtn.innerText = 'تم الإرسال';
+                        resendBtn.innerHTML = 'تم الإرسال';
                     } catch (err) {
                         messageEl.innerText = 'حدث خطأ أثناء إرسال البريد. حاول مرة أخرى بعد قليل.';
                     }
@@ -612,8 +648,7 @@
         window.handleSignOut = async function() {
             try {
                 await signOut(auth);
-                // onAuthStateChanged will handle UI changes
-                hideModal('main-content'); // Hide main content immediately for faster feedback
+                document.getElementById('main-content').classList.add('hidden');
                 showWelcomeModal();
             } catch (error) {
                 console.error("Sign Out Error", error);
@@ -629,8 +664,7 @@
                 const userDocRef = doc(db, "artifacts", appId, "users", user.uid);
                 const docSnap = await getDoc(userDocRef);
                 if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    userIdDisplay.innerText = `مرحباً، ${userData.firstName}`;
+                    userIdDisplay.innerText = `مرحباً، ${docSnap.data().firstName}`;
                 } else {
                      userIdDisplay.innerText = `مرحباً بك`;
                 }
@@ -659,12 +693,7 @@
         const DEFAULT_COOLDOWN = 120;
 
         function getRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        function triggerAnimation(element, animationClass) {
-            element.classList.remove(animationClass);
-            void element.offsetWidth;
-            element.classList.add(animationClass);
-        }
-
+        
         window.updateResults = function() {
             const now = Date.now();
             if ((now - lastRefreshTime) / 1000 < DEFAULT_COOLDOWN) return;
@@ -699,7 +728,11 @@
                 if (Math.random() < 0.3) { els.potential.innerText = "استقرار 6X"; els.icon.innerText = "📈"; }
             }
 
-            Object.values(els).forEach(el => triggerAnimation(el, 'label-update-animation'));
+            Object.values(els).forEach(el => {
+                el.classList.remove('label-update-animation');
+                void el.offsetWidth;
+                el.classList.add('label-update-animation');
+            });
             lastRefreshTime = now;
             updateRefreshButtonState();
         }
@@ -726,11 +759,6 @@
         }
         
         window.showVipMessage = function(type) {
-            const messages = {
-                analysis: "تحليل النتيجة (VIP)",
-                strategy: "نصائح استراتيجية (VIP)",
-                future: "توقعات الجولة القادمة (VIP)"
-            };
             const outputIds = {
                 analysis: "analysisOutput",
                 strategy: "strategyTipsOutput",
