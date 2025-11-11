@@ -1,57 +1,780 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MAYSTROC - Firebase Fix</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; direction: rtl; }
-    #status { font-weight: bold; margin-top: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAYSTRO CRASH</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo and Inter are already there, adding Press Start 2P for game score look -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* New Base styles for the professional theme */
+        body {
+            font-family: 'Inter', 'Cairo', sans-serif;
+            background: #000000; /* Solid black background */
+            color: #E0E0E0; /* Light grey for general text */
+            overflow: hidden; /* Prevent scrolling during splash screen */
+        }
+
+        /* General button style */
+        .button-base {
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.05em; /* Slightly increased letter spacing for modern look */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        /* Default action button (Update Result) and AI buttons */
+        .action-button-gradient {
+            background-image: linear-gradient(to right, #7acd07, #9ffd09); /* New Green gradient */
+            color: #1A1A1A; /* Dark text for contrast on green */
+            box-shadow: 0 6px 20px rgba(159, 253, 9, 0.4); /* Matching green shadow */
+            border: 1px solid rgba(159, 253, 9, 0.3); /* Subtle green border */
+        }
+        .action-button-gradient:hover {
+            box-shadow: 0 8px 25px rgba(159, 253, 9, 0.6);
+            transform: translateY(-3px);
+        }
+        .action-button-gradient:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(159, 253, 9, 0.3);
+            transform: scale(0.98);
+        }
+
+        /* Disabled button style for cooldown */
+        .cooldown-button {
+            background-image: linear-gradient(to right, #2A2A2A, #3A3A3A); /* Darker grey for disabled state */
+            color: #888888; /* Muted grey text color */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: not-allowed;
+            opacity: 0.7;
+            border: 1px solid #4A4A4A; /* Darker subtle border */
+        }
+        .cooldown-button:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .cooldown-button:active {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Box styling */
+        .box-container {
+            background-color: #1E1E1E; /* Slightly lighter than body for depth */
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Deeper, more diffused shadow */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle border */
+        }
+
+        /* Main title animation */
+        .title-pulse {
+            animation: pulse-glow-new 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow-new {
+            0%, 100% { text-shadow: 0 0 10px rgba(159, 253, 9, 0.7); } /* New Green glow */
+            50% { text-shadow: 0 0 20px rgba(159, 253, 9, 1); } /* New Green glow */
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #9ffd09; /* Matching new accent color */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Splash screen logo animation */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite ease-in-out;
+        }
+
+        /* Main content entrance animation */
+        @keyframes fade-slide-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-slide-in-active {
+            animation: fade-slide-in 0.8s ease-out forwards;
+        }
+
+        /* Result labels update animation */
+        @keyframes pop-in {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .label-update-animation {
+            animation: pop-in 0.4s ease-out;
+        }
+
+        /* Icon change animation */
+        @keyframes icon-fade-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .icon-animation {
+            animation: icon-fade-in 0.5s ease-out;
+        }
+
+        /* Warning Modal Styles */
+        .warning-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100; /* Above splash screen */
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.3s ease-in-out;
+        }
+        .warning-modal-content {
+            background-color: #1E1E1E;
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 0 40px rgba(159, 253, 9, 0.4); /* New Green glow */
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            transform: translateY(-20px); /* Start slightly above */
+            transition: transform 0.3s ease-in-out;
+        }
+        .warning-modal-overlay.show {
+            opacity: 1;
+        }
+        .warning-modal-overlay.show .warning-modal-content {
+            transform: translateY(0);
+        }
+        .telegram-link {
+            color: #9ffd09; /* Match accent color */
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+        .telegram-link:hover {
+            color: #7acd07; /* Slightly darker green on hover */
+            text-decoration: underline;
+        }
+        .main-title-logo {
+            width: 5rem; /* Increased size for main title logo */
+            height: 5rem; /* Increased size for main title logo */
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 1rem; /* Adjusted space */
+        }
+        .input-field {
+            background-color: #0A0A0A;
+            border: 1px solid #4A4A4A;
+            color: #E0E0E0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #9ffd09;
+            box-shadow: 0 0 0 3px rgba(159, 253, 9, 0.3);
+        }
+        /* Style for the game score font */
+        .game-score-font {
+            font-family: 'Press Start 2P', cursive;
+            /* Adjust font size and line height to fit well */
+            font-size: 1.8rem; /* Example size, adjust as needed */
+            line-height: 1.2;
+        }
+        /* Adjust for smaller screens if Press Start 2P is too large */
+        @media (max-width: 768px) {
+            .game-score-font {
+                font-size: 1.3rem; /* Smaller size for mobile */
+            }
+        }
+        @media (max-width: 480px) {
+            .game-score-font {
+                font-size: 1rem; /* Even smaller for very small screens */
+            }
+        }
+        .telegram-logo-link {
+            display: flex; /* Use flexbox to center content */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            margin-top: 2rem; /* More space above the logo */
+            flex-direction: column; /* Stack text and image vertically */
+            gap: 0.5rem; /* Space between text and image */
+        }
+        .telegram-logo {
+            width: 60px; /* Slightly larger logo */
+            height: 60px; /* Slightly larger logo */
+            transition: transform 0.2s ease-in-out;
+        }
+        .telegram-logo:hover {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+    </style>
 </head>
 <body>
-  <h1>اختبار تهيئة Firebase</h1>
-  <p id="status">جاري التهيئة...</p>
 
-  <script type="module">
-    // استيراد من CDN (نسخة modular v9+)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-[#000000] z-50 transition-opacity duration-700 opacity-100">
+        <!-- Using the provided image for the logo -->
+        <img src="logo.png" alt="App Logo" class="w-36 h-36 rounded-full mb-6 animate-bounce-slow">
+        <!-- Removed h1 and p tags -->
+    </div>
 
-    // تكوين Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyC_sNU3t3qe5qGxCX6hStUFuKLiZ24rlm8",
-      authDomain: "crashai-266d7.firebaseapp.com",
-      projectId: "crashai-266d7",
-      // صحّحت قيمة storageBucket إلى الشكل الصحيح (*.appspot.com)
-      storageBucket: "crashai-266d7.appspot.com",
-      messagingSenderId: "1073865636311",
-      appId: "1:1073865636311:web:c05c2d558d9ffbede3b392",
-      measurementId: "G-WBZG6JRY72"
-    };
+    <!-- Warning Modal -->
+    <div id="warning-modal" class="warning-modal-overlay hidden">
+        <div class="warning-modal-content">
+            <h3 class="text-2xl font-bold text-[#9ffd09] mb-4">⚠️ تنبيه هام ⚠️</h3>
+            <p class="text-lg text-gray-300 mb-2">
+                يمكنك استخدام هذا السكريبت فقط مع حساب جديد وباستخدام الكود الترويجي <span class="text-[#9ffd09] font-bold">MAS98</span>.
+            </p>
+            <p class="text-lg text-gray-300 mb-4">
+                يمكنك تحديث النتائج كل دقيقتين. إذا كان لديك حساب VIP، يمكنك التحديث في كل جولة.
+            </p>
+            <div class="mb-6">
+                <label for="huntIdInput" class="block text-gray-300 text-lg mb-2">أدخل معرفك (ID):</label>
+                <input type="number" id="huntIdInput" placeholder="أدخل معرفك هنا..." class="input-field" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+            <button onclick="dismissWarning()"
+                    class="button-base action-button-gradient px-8 py-3 rounded-xl text-black font-semibold text-lg">
+                فهمت
+            </button>
+        </div>
+    </div>
 
-    (function initFirebase() {
-      try {
-        const app = initializeApp(firebaseConfig);
-        console.log('Firebase initialized', app);
-        document.getElementById('status').textContent = 'Firebase مُهيّأ بنجاح';
+    <!-- Main Content Container (initially hidden) -->
+    <div id="main-content" class="hidden flex-col items-center justify-center min-h-screen p-6 text-white text-right">
 
-        // Analytics قد يفشل في بعض البيئات (مثلاً عند تشغيل الصفحة عبر file:// أو حظر المتصفح)
-        try {
-          const analytics = getAnalytics(app);
-          console.log('Analytics initialized', analytics);
-        } catch (analyticsErr) {
-          console.warn('Analytics not initialized:', analyticsErr);
+        <!-- Main Title -->
+        <h2 class="text-4xl md:text-5xl font-extrabold text-[#9ffd09] mb-8 title-pulse">
+            <img src="logo.png" alt="Logo" class="main-title-logo"> <span class="game-score-font">MAYSTRO CRASH</span>
+        </h2>
+
+        <!-- Hunt ID Display -->
+        <div id="huntIdDisplay" class="text-xl text-gray-400 mb-4"></div>
+
+        <!-- Simulator Box -->
+        <div class="box-container w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
+            <!-- Output Labels -->
+            <div id="saida" class="label text-4xl font-bold mt-4 mb-2 text-white transition-all duration-300 ease-in-out">---</div>
+            <div id="grafico" class="label text-2xl text-gray-400 mb-4 transition-all duration-300 ease-in-out">---</div>
+
+            <!-- Dynamic Result Icon -->
+            <div id="result-icon-container" class="text-7xl my-6 mx-auto flex items-center justify-center h-24">
+                <span id="result-icon" class="icon-animation" style="display: none;"></span>
+            </div>
+
+            <div id="posivel" class="label text-xl text-gray-400 mt-4 transition-all duration-300 ease-in-out">---</div>
+            <div id="protecao" class="label text-xl text-gray-400 mt-2 transition-all duration-300 ease-in-out">---</div>
+
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <!-- Button to manually update results with cooldown -->
+            <button id="updateResultButton" onclick="atualizarResultados()"
+                    class="button-base action-button-gradient">
+                <span id="updateResultButtonText">تحديث النتيجة</span>
+            </button>
+
+            <!-- AI Buttons (now all locked) -->
+            <button id="analyzeButton" onclick="showVipMessage('analysis')"
+                    class="button-base cooldown-button">
+                <span id="analyzeButtonText">✨ تحليل النتيجة (VIP)</span>
+                <div id="analyzeLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
+            </button>
+            <button id="strategyTipsButton" onclick="showVipMessage('strategy')"
+                    class="button-base cooldown-button">
+                <span id="strategyTipsButtonText">✨ نصائح استراتيجية (VIP)</span>
+                <div id="strategyTipsLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
+            </button>
+            <button id="futurePredictionButton" onclick="showVipMessage('future')"
+                    class="button-base cooldown-button">
+                <span id="futurePredictionButtonText">🔮 توقعات الجولة القادمة (VIP)</span>
+                <div id="futurePredictionLoadingSpinner" class="loading-spinner ml-2 hidden"></div>
+            </button>
+        </div>
+
+        <!-- Gemini API Analysis Output -->
+        <div id="geminiAnalysis" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+             style="min-height: 100px;">
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">تحليل الذكاء الاصطناعي:</h3>
+            <p id="analysisOutput" class="text-gray-300 text-lg">
+                انقر على "تحليل النتيجة (VIP)" للحصول على تحليل من الذكاء الاصطناعي.
+            </p>
+        </div>
+
+        <!-- Gemini API Strategy Tips Output -->
+        <div id="geminiStrategyTips" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+             style="min-height: 100px;">
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">نصائح استراتيجية:</h3>
+            <p id="strategyTipsOutput" class="text-gray-300 text-lg">
+                انقر على "نصائح استراتيجية (VIP)" للحصول على نصائح من الذكاء الاصطناعي.
+            </p>
+        </div>
+
+        <!-- Gemini API Future Prediction Output -->
+        <div id="geminiFuturePrediction" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right"
+             style="min-height: 100px;">
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">🔮 توقعات الجولة القادمة:</h3>
+            <p id="futurePredictionOutput" class="text-gray-300 text-lg">
+                انقر على "توقعات الجولة القادمة (VIP)" للحصول على توقعات من الذكاء الاصطناعي.
+            </p>
+        </div>
+
+        <!-- Static Diagnostic/Statistical Section -->
+        <div id="staticDiagnostic" class="box-container mt-8 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto text-right">
+            <h3 class="text-xl font-bold text-[#9ffd09] mb-4">📊 التحليل الإحصائي:</h3>
+            <ul class="text-gray-300 text-lg list-disc pr-6">
+                <li class="mb-2">متوسط نقطة الانهيار التاريخية: 1.85x</li>
+                <li class="mb-2">احتمالية الانهيار قبل 2x: حوالي 60%</li>
+                <li class="mb-2">احتمالية الوصول إلى 5x أو أكثر: حوالي 25%</li>
+                <li class="mb-2">أعلى نقطة انهيار مسجلة: 15.78x</li>
+                <li>أدنى نقطة انهيار مسجلة: 1.01x</li>
+            </ul>
+            <div class="telegram-logo-link">
+                <a href="https://t.me/maysttrobet" target="_blank">
+                    <img src="logotl.png" alt="Telegram Logo" class="telegram-logo">
+                </a>
+                <span class="text-gray-400 text-sm mt-2">تواصل معنا</span> <!-- Added "Contact Us" text -->
+            </div>
+        </div>
+
+    </div> <!-- End of main-content -->
+
+    <script>
+        // Global variables
+        let currentResultCategory = "---";
+        let lastRefreshTime = 0; // Timestamp of the last refresh
+        let refreshCooldownTimerId = null; // Timer for refresh button cooldown
+
+        const DEFAULT_COOLDOWN = 120; // 2 minutes in seconds
+
+        /**
+         * Generates a random integer between min (inclusive) and max (inclusive).
+         * @param {number} min - The minimum value.
+         * @param {number} max - The maximum value.
+         * @returns {number} A random integer.
+         */
+        function getRandom(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-      } catch (err) {
-        console.error('Firebase init error:', err);
-        document.getElementById('status').textContent = 'خطأ في تهيئة Firebase — تحقق من الكونسول';
-      }
-    })();
-  </script>
 
-  <noscript>
-    <p>الصفحة تحتاج إلى تفعيل JavaScript لتعمل بشكل صحيح.</p>
-  </noscript>
+        /**
+         * Applies and removes a CSS animation class to an element to trigger a re-animation.
+         * @param {HTMLElement} element - The DOM element to animate.
+         * @param {string} animationClass - The CSS class containing the animation.
+         */
+        function triggerAnimation(element, animationClass) {
+            element.classList.remove(animationClass);
+            void element.offsetWidth; // This line forces a reflow
+            element.classList.add(animationClass);
+        }
+
+        /**
+         * Updates the simulator results based on a random outcome.
+         * Includes cooldown logic for the refresh button.
+         */
+        function atualizarResultados() {
+            const now = Date.now();
+            const cooldownDuration = DEFAULT_COOLDOWN;
+            const timeElapsed = (now - lastRefreshTime) / 1000; // in seconds
+
+            if (timeElapsed < cooldownDuration) {
+                // If still in cooldown, prevent refresh
+                updateRefreshButtonState(); // Update button to show remaining time
+                return;
+            }
+
+            // Perform result update
+            let Resultado = Math.random() < 0.5 ? "Rosa" : "Outro";
+            currentResultCategory = Resultado;
+
+            const saida = document.getElementById("saida");
+            const grafico = document.getElementById("grafico");
+            const resultIcon = document.getElementById("result-icon");
+            const posivel = document.getElementById("posivel");
+            const protecao = document.getElementById("protecao");
+
+            // Ensure icon is visible before updating its content
+            resultIcon.style.display = 'block';
+
+            if (Resultado === "Rosa") {
+                posivel.innerText = "تقريباً 5X";
+                protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
+                saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
+                grafico.innerText = getRandom(50, 70) + "%";
+                resultIcon.innerText = "✅";
+            } else {
+                posivel.innerText = "الدخول لمنطقة الخطر";
+                protecao.innerText = getRandom(0, 1) + "." + getRandom(1, 30) + "X";
+                saida.innerText = getRandom(1, 1) + "." + getRandom(1, 59) + "X";
+                grafico.innerText = getRandom(40, 50) + "%";
+                resultIcon.innerText = "⚠️";
+
+                if (Math.random() < 0.5) {
+                    posivel.innerText = "الخطر 4X";
+                    protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
+                    saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
+                    grafico.innerText = getRandom(50, 70) + "%";
+                    resultIcon.innerText = "🚨";
+                }
+
+                if (Math.random() < 0.3) {
+                    posivel.innerText = "استقرار 6X";
+                    protecao.innerText = getRandom(2, 2) + "." + getRandom(1, 59) + "X";
+                    saida.innerText = getRandom(2, 4) + "." + getRandom(1, 59) + "X";
+                    grafico.innerText = getRandom(50, 70) + "%";
+                    resultIcon.innerText = "📈";
+                }
+            }
+
+            triggerAnimation(saida, 'label-update-animation');
+            triggerAnimation(grafico, 'label-update-animation');
+            triggerAnimation(posivel, 'label-update-animation');
+            triggerAnimation(protecao, 'label-update-animation');
+            triggerAnimation(resultIcon, 'icon-animation');
+
+            lastRefreshTime = now; // Update last refresh time
+            updateRefreshButtonState(); // Start/reset cooldown display
+        }
+
+        /**
+         * Updates the state (text, disabled, styling) of the "Update Result" button based on cooldown.
+         */
+        function updateRefreshButtonState() {
+            const updateButton = document.getElementById("updateResultButton");
+            const updateButtonTextSpan = document.getElementById("updateResultButtonText");
+            const cooldownDuration = DEFAULT_COOLDOWN; // Always 2 minutes
+            const now = Date.now();
+            const timeRemaining = Math.max(0, cooldownDuration - Math.floor((now - lastRefreshTime) / 1000));
+
+            if (timeRemaining > 0) {
+                updateButton.disabled = true;
+                updateButton.classList.add('cooldown-button'); // Apply cooldown style
+                updateButton.classList.remove('action-button-gradient');
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                updateButtonTextSpan.innerText = `الانتظار: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                if (!refreshCooldownTimerId) {
+                    refreshCooldownTimerId = setInterval(updateRefreshButtonState, 1000);
+                }
+            } else {
+                updateButton.disabled = false;
+                updateButton.classList.remove('cooldown-button');
+                updateButton.classList.add('action-button-gradient');
+                updateButtonTextSpan.innerText = "تحديث النتيجة";
+                clearInterval(refreshCooldownTimerId);
+                refreshCooldownTimerId = null;
+            }
+        }
+
+        /**
+         * Displays a VIP message when a locked AI button is clicked.
+         * @param {string} type - 'analysis' or 'strategy' or 'future' to determine which output area to use.
+         */
+        function showVipMessage(type) {
+            const message = "هذه الميزة متاحة فقط لمستخدمي VIP!"; // "This feature is only available for VIP users!"
+            if (type === 'analysis') {
+                document.getElementById("analysisOutput").innerText = message;
+            } else if (type === 'strategy') {
+                document.getElementById("strategyTipsOutput").innerText = message;
+            } else if (type === 'future') {
+                document.getElementById("futurePredictionOutput").innerText = message;
+            }
+        }
+
+        /**
+         * Calls the Gemini API to analyze the current simulator results.
+         */
+        async function analyzeResultWithGemini() {
+            const analyzeButton = document.getElementById("analyzeButton");
+            const analyzeButtonText = document.getElementById("analyzeButtonText");
+            const analyzeLoadingSpinner = document.getElementById("analyzeLoadingSpinner");
+            const analysisOutput = document.getElementById("analysisOutput");
+
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
+
+            analyzeButton.disabled = true;
+            analyzeButtonText.classList.add("hidden");
+            analyzeLoadingSpinner.classList.remove("hidden");
+            analysisOutput.innerText = "جاري تحليل النتيجة بواسطة الذكاء الاصطناعي...";
+
+            const saidaValue = document.getElementById("saida").innerText;
+            const graficoValue = document.getElementById("grafico").innerText;
+            const posivelValue = document.getElementById("posivel").innerText;
+            const protecaoValue = document.getElementById("protecao").innerText;
+
+            const prompt = `
+                حلل نتائج "MAYSTRO CRASH" التالية وقدم شرحًا موجزًا ومفيدًا.
+                الناتج الحالي (Saida): ${saidaValue}
+                النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
+                النتيجة المحتملة (Posivel): ${posivelValue}
+                الحماية (Protecao): ${protecaoValue}
+                فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
+
+                ركز على تفسير هذه القيم للمستخدم بطريقة سهلة الفهم. اجعل الشرح موجزًا وفي حدود 100 كلمة وباللغة العربية الفصحى.
+            `;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    analysisOutput.innerText = text;
+                } else {
+                    analysisOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تحليل النتيجة حاليًا. يرجى المحاولة مرة أخرى.";
+                    console.error("Gemini API response structure unexpected:", result);
+                }
+            } catch (error) {
+                analysisOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
+                console.error("Error calling Gemini API:", error);
+            } finally {
+                analyzeButton.disabled = false;
+                analyzeButtonText.classList.remove("hidden");
+                analyzeLoadingSpinner.classList.add("hidden");
+            }
+        }
+
+        /**
+         * Calls the Gemini API to get strategy tips based on the current simulator results.
+         */
+        async function getStrategyTipsWithGemini() {
+            const strategyTipsButton = document.getElementById("strategyTipsButton");
+            const strategyTipsButtonText = document.getElementById("strategyTipsButtonText");
+            const strategyTipsLoadingSpinner = document.getElementById("strategyTipsLoadingSpinner");
+            const strategyTipsOutput = document.getElementById("strategyTipsOutput");
+
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
+
+            strategyTipsButton.disabled = true;
+            strategyTipsButtonText.classList.add("hidden");
+            strategyTipsLoadingSpinner.classList.remove("hidden");
+            strategyTipsOutput.innerText = "جاري الحصول على نصائح استراتيجية بواسطة الذكاء الاصطناعي...";
+
+            const saidaValue = document.getElementById("saida").innerText;
+            const graficoValue = document.getElementById("grafico").innerText;
+            const posivelValue = document.getElementById("posivel").innerText;
+            const protecaoValue = document.getElementById("protecao").innerText;
+
+            const prompt = `
+                بناءً على نتائج "MAYSTRO CRASH" التالية، قدم 3-5 نصائح استراتيجية موجزة ومفيدة للمستخدم.
+                الناتج الحالي (Saida): ${saidaValue}
+                النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
+                النتيجة المحتملة (Posivel): ${posivelValue}
+                الحماية (Protecao): ${protecaoValue}
+                فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
+
+                ركز على نصائح قابلة للتطبيق في سياق لعبة "Crash" (مثل متى يجب السحب، أو المخاطرة، أو الانتظار).
+                اجعل النصائح في شكل قائمة نقطية وباللغة العربية الفصحى.
+            `;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    strategyTipsOutput.innerText = text;
+                } else {
+                    strategyTipsOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تقديم نصائح حاليًا. يرجى المحاولة مرة أخرى.";
+                    console.error("Gemini API response structure unexpected:", result);
+                }
+            } catch (error) {
+                strategyTipsOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
+                console.error("Error calling Gemini API:", error);
+            } finally {
+                strategyTipsButton.disabled = false;
+                strategyTipsButtonText.classList.remove("hidden");
+                strategyTipsLoadingSpinner.classList.add("hidden");
+            }
+        }
+
+        /**
+         * Calls the Gemini API to get future predictions based on the current simulator results.
+         */
+        async function getFuturePredictionWithGemini() {
+            const futurePredictionButton = document.getElementById("futurePredictionButton");
+            const futurePredictionButtonText = document.getElementById("futurePredictionButtonText");
+            const futurePredictionLoadingSpinner = document.getElementById("futurePredictionLoadingSpinner");
+            const futurePredictionOutput = document.getElementById("futurePredictionOutput");
+
+            // This function will now only be called if the button is NOT locked.
+            // Its functionality remains the same.
+
+            futurePredictionButton.disabled = true;
+            futurePredictionButtonText.classList.add("hidden");
+            futurePredictionLoadingSpinner.classList.remove("hidden");
+            futurePredictionOutput.innerText = "جاري الحصول على توقعات الجولة القادمة بواسطة الذكاء الاصاهرائى...";
+
+            const saidaValue = document.getElementById("saida").innerText;
+            const graficoValue = document.getElementById("grafico").innerText;
+            const posivelValue = document.getElementById("posivel").innerText;
+            const protecaoValue = document.getElementById("protecao").innerText;
+
+            const prompt = `
+                بناءً على نتائج "MAYSTRO CRASH" الحالية، قدم توقعًا موجزًا للجولة القادمة.
+                الناتج الحالي (Saida): ${saidaValue}
+                النسبة المئوية للرسم البياني (Grafico): ${graficoValue}
+                النتيجة المحتملة (Posivel): ${posivelValue}
+                فئة النتيجة الرئيسية: ${currentResultCategory === "Rosa" ? "وردي (إيجابي)" : "آخر (قد يكون خطيرًا)"}
+
+                اجعل التوقع في حدود 50 كلمة، مع التركيز على احتمالية الارتفاع أو الانخفاض أو الاستقرار، وباللغة العربية الفصحى.
+            `;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    futurePredictionOutput.innerText = text;
+                } else {
+                    futurePredictionOutput.innerText = "عذرًا، لم يتمكن الذكاء الاصطناعي من تقديم توقعات حاليًا. يرجى المحاولة مرة أخرى.";
+                    console.error("Gemini API response structure unexpected:", result);
+                }
+            } catch (error) {
+                futurePredictionOutput.innerText = "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.";
+                console.error("Error calling Gemini API:", error);
+            } finally {
+                futurePredictionButton.disabled = false;
+                futurePredictionButtonText.classList.remove("hidden");
+                futurePredictionLoadingSpinner.classList.add("hidden");
+            }
+        }
+
+        /**
+         * Dismisses the warning modal and shows the main content.
+         */
+        function dismissWarning() {
+            const warningModal = document.getElementById('warning-modal');
+            const mainContent = document.getElementById('main-content');
+            const huntIdInput = document.getElementById('huntIdInput');
+            const huntIdDisplay = document.getElementById('huntIdDisplay');
+
+            warningModal.classList.remove('show');
+            warningModal.classList.add('hidden');
+
+            mainContent.classList.remove('hidden');
+            mainContent.classList.add('flex');
+            mainContent.classList.add('fade-slide-in-active');
+            document.body.style.overflow = 'auto';
+
+            // Display the entered Hunt ID
+            const enteredId = huntIdInput.value.trim();
+            if (enteredId) {
+                huntIdDisplay.innerText = `ID: ${enteredId}`;
+            } else {
+                huntIdDisplay.innerText = `ID: غير محدد`; // "ID: Undefined"
+            }
+
+
+            // Initialize result fields to default "---" state
+            document.getElementById("saida").innerText = "---";
+            document.getElementById("grafico").innerText = "---";
+            document.getElementById("result-icon").style.display = 'none'; // Hide icon initially
+            document.getElementById("posivel").innerText = "---";
+            document.getElementById("protecao").innerText = "---";
+
+            // Initialize the refresh button state
+            updateRefreshButtonState();
+        }
+
+        // Splash screen and Warning Modal logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const warningModal = document.getElementById('warning-modal');
+
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                    warningModal.classList.remove('hidden');
+                    warningModal.classList.add('show');
+                }, 700);
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
+هذا كود خاص بموقعي اريد بعض تغغيرات
